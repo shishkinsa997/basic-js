@@ -1,4 +1,4 @@
-const { NotImplementedError } = require('../lib');
+const { NotImplementedError } = require("../lib");
 
 /**
  * Implement class VigenereCipheringMachine that allows us to create
@@ -20,14 +20,62 @@ const { NotImplementedError } = require('../lib');
  *
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  constructor(Boolean = true) {
+    this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    this.isDirect = Boolean;
+  }
+  encrypt(string, key) {
+    return this.crypt(string, key, true);
   }
 
-  decrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  decrypt(string, key) {
+    return this.crypt(string, key, false);
+  }
+
+  crypt(string, key, encrypt) {
+    this.areValid(string, key);
+
+    string = string.toUpperCase();
+    key = key.toUpperCase().repeat(Math.ceil(string.length / key.length));
+
+    let res = "";
+    let j = 0;
+    for (let i = 0; i < string.length; i++) {
+      if (!this.alphabet.includes(string[i])) {
+        res += string[i];
+      } else {
+        if (encrypt) {
+          res += String.fromCharCode(
+            ((string[i].charCodeAt(0) + key[j].charCodeAt(0) - 130) % 26) + 65,
+          );
+        } else {
+          res += String.fromCharCode(
+            ((string[i].charCodeAt(0) - key[j].charCodeAt(0) + 26) % 26) + 65,
+          );
+        }
+        j++;
+      }
+    }
+    return this.convertSentence(res);
+  }
+
+  convertSentence(string) {
+    if (this.isDirect) {
+      return string;
+    }
+
+    let res = "";
+    for (let w of string) {
+      res = w + res;
+    }
+
+    return res;
+  }
+
+  areValid(string, key) {
+    if (!string || !key) {
+      throw new Error("Incorrect arguments!");
+    }
   }
 }
 
